@@ -193,6 +193,8 @@ var _fbConfig = {
 var _fbReady = false, _user = null, _foto = null, _katalog = [], _siparisler = [];
 
 function durum(txt, renk) { var e = document.getElementById('durumSerit'); if (e) { e.textContent = txt; e.style.color = renk || '#64748b'; } }
+// Katalog, giriş yapılan hesabın altında tutulur (users/{uid}/katalog) → ayrı güvenlik kuralı gerekmez.
+function katRef(p) { var b = 'users/' + (_user && _user.uid) + '/katalog'; return firebase.database().ref(p ? b + '/' + p : b); }
 
 // ===== Fotoğraf sıkıştırma (ana uygulamayla aynı) =====
 function resizeImage(file, cb, maxSize, q) {
@@ -241,8 +243,8 @@ function urunEkle() {
     };
     var btn = document.querySelector('.btn-ekle');
     if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
-    firebase.database().ref('katalog/urunler').push(urun).then(function() {
-        return firebase.database().ref('katalog/rev').set(firebase.database.ServerValue.TIMESTAMP);
+    katRef('urunler').push(urun).then(function() {
+        return katRef('rev').set(firebase.database.ServerValue.TIMESTAMP);
     }).then(function() {
         // formu temizle
         _foto = null;
@@ -261,7 +263,7 @@ function urunEkle() {
 
 // ===== Kataloğum (canlı) =====
 function katalogDinle() {
-    firebase.database().ref('katalog/urunler').on('value', function(snap) {
+    katRef('urunler').on('value', function(snap) {
         _katalog = [];
         snap.forEach(function(c) { var v = c.val() || {}; v._id = c.key; _katalog.push(v); });
         _katalog.sort(function(a, b) { return (b.eklendi || 0) - (a.eklendi || 0); });
@@ -291,14 +293,14 @@ function katalogRender() {
 }
 function urunSil(id) {
     if (!confirm('Bu ürünü katalogdan sil?\n从目录中删除此产品？')) return;
-    firebase.database().ref('katalog/urunler/' + id).remove().then(function() {
-        return firebase.database().ref('katalog/rev').set(firebase.database.ServerValue.TIMESTAMP);
+    katRef('urunler/' + id).remove().then(function() {
+        return katRef('rev').set(firebase.database.ServerValue.TIMESTAMP);
     }).catch(function(e) { alert('Silinemedi: ' + (e && e.message ? e.message : e)); });
 }
 
 // ===== Gelen siparişler (canlı) =====
 function siparisDinle() {
-    firebase.database().ref('katalog/siparisler').on('value', function(snap) {
+    katRef('siparisler').on('value', function(snap) {
         _siparisler = [];
         snap.forEach(function(c) { var v = c.val() || {}; v._id = c.key; _siparisler.push(v); });
         _siparisler.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); });

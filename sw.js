@@ -2,7 +2,7 @@
 // Önbellek adı BU YAYINA özel (SCOPE'a göre) — aynı origin'deki diğer repoların önbelleğine dokunmaz.
 var SCOPE = self.location.pathname.replace(/\/[^\/]*$/, '');
 var PREFIX = 'tedarikci' + SCOPE.replace(/\//g, '-') + '-';
-var CACHE = PREFIX + 'v1';
+var CACHE = PREFIX + 'v2';
 var ASSETS = ['./', './index.html'];
 
 self.addEventListener('install', function(e) {
