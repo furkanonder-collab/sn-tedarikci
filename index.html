@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tedarikçi 供应商">
+<meta name="theme-color" content="#0b1120">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230b1120' width='100' height='100' rx='20'/><text x='50' y='70' text-anchor='middle' font-size='52'>📦</text></svg>">
+<title>Tedarikçi · 供应商</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: radial-gradient(1200px 600px at 50% -10%, #1e293b 0%, #0b1120 55%) fixed, #0b1120;
+    color: #e2e8f0; min-height: 100vh; padding: 0 14px 96px;
+}
+.header { text-align: center; padding: 18px 0 10px; }
+.logo { width: 44px; height: 44px; border-radius: 13px; background: linear-gradient(135deg,#f59e0b,#ef4444); display: inline-flex; align-items: center; justify-content: center; font-size: 23px; box-shadow: 0 8px 24px rgba(245,158,11,0.3); margin-bottom: 6px; }
+.header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+.header h1 .cn { font-size: 14px; color: #94a3b8; font-weight: 600; }
+.header small { color: #64748b; font-size: 12px; display: block; margin-top: 2px; }
+
+.card { background: rgba(30,41,59,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(148,163,184,0.1); border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+.card-title { font-size: 12px; color: #94a3b8; margin-bottom: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.field label { font-size: 12px; color: #94a3b8; font-weight: 600; padding-left: 2px; }
+.field label .cn { color: #64748b; margin-left: 4px; font-weight: 500; }
+.field input {
+    background: #0b1120; border: 1.5px solid #1e293b; border-radius: 12px; padding: 13px;
+    color: #f1f5f9; font-size: 17px; text-align: center; width: 100%; -webkit-appearance: none;
+    transition: border-color 0.2s, box-shadow 0.2s; font-weight: 600;
+}
+.field input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
+.field input::placeholder { color: #475569; font-weight: 400; font-size: 14px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.gram-toggle { display: flex; gap: 4px; background: #0b1120; padding: 4px; border-radius: 12px; border: 1.5px solid #1e293b; margin-bottom: 12px; }
+.gram-toggle input { display: none; }
+.gram-toggle label { flex: 1; text-align: center; padding: 10px; font-size: 13px; color: #94a3b8; border-radius: 9px; cursor: pointer; transition: all 0.2s; font-weight: 600; }
+.gram-toggle input:checked + label { background: linear-gradient(135deg,#f59e0b,#f97316); color: white; box-shadow: 0 4px 12px rgba(245,158,11,0.35); }
+
+.foto-blok { display: flex; justify-content: center; margin-bottom: 14px; }
+.foto-ekle { width: 120px; height: 150px; border-radius: 14px; border: 1.5px dashed #334155; background: #0b1120; color: #64748b; font-size: 34px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
+.foto-ekle span.t { font-size: 11px; font-weight: 600; }
+.foto-ekle:active { background: #1e293b; }
+.foto-onizleme { width: 120px; height: 150px; border-radius: 14px; object-fit: contain; background: #0b1120; border: 1px solid rgba(148,163,184,0.15); cursor: pointer; }
+
+.btn-ana { width: 100%; border: none; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform 0.1s; }
+.btn-ana:active { transform: scale(0.98); }
+.btn-ekle { background: linear-gradient(135deg,#f59e0b,#f97316); color: #fff; box-shadow: 0 6px 16px rgba(245,158,11,0.3); }
+.btn-siparis { background: linear-gradient(135deg,#10b981,#059669); color: #fff; box-shadow: 0 6px 16px rgba(16,185,129,0.3); }
+.btn-ana .cn { font-weight: 600; opacity: 0.85; margin-left: 4px; }
+
+/* Katalog / sipariş grid */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.k-card { background: rgba(15,23,42,0.85); border: 1px solid rgba(148,163,184,0.1); border-radius: 14px; overflow: hidden; position: relative; }
+.k-card img { width: 100%; aspect-ratio: 3/4; object-fit: contain; background: #0b1120; display: block; }
+.k-card .k-bilgi { padding: 8px 10px; }
+.k-card .k-fiyat { font-size: 15px; font-weight: 800; color: #fbbf24; }
+.k-card .k-gram { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+.k-card .k-not { font-size: 11px; color: #cbd5e1; margin-top: 4px; word-break: break-word; }
+.k-sil { position: absolute; top: 6px; right: 6px; background: rgba(239,68,68,0.85); border: none; color: #fff; width: 30px; height: 30px; border-radius: 9px; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.k-rozet { position: absolute; top: 6px; left: 6px; background: rgba(16,185,129,0.9); color: #04281c; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; }
+
+/* Gelen sipariş kartı */
+.s-card { background: rgba(15,23,42,0.85); border: 1px solid rgba(148,163,184,0.12); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+.s-ust { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.s-tarih { font-size: 13px; font-weight: 700; color: #f1f5f9; }
+.s-rozet { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: rgba(251,191,36,0.18); color: #fbbf24; }
+.s-urunler { display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 8px; }
+.s-urun { position: relative; }
+.s-urun img { width: 100%; aspect-ratio: 3/4; object-fit: contain; background: #0b1120; border-radius: 10px; border: 1px solid rgba(148,163,184,0.12); }
+.s-adet { position: absolute; bottom: 4px; right: 4px; background: rgba(16,185,129,0.92); color: #04281c; font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 999px; }
+.s-ozet { font-size: 12px; color: #94a3b8; margin-top: 10px; display: flex; justify-content: space-between; }
+.s-ozet b { color: #fbbf24; }
+
+.empty { text-align: center; padding: 50px 20px; color: #475569; }
+.empty .ico { font-size: 40px; margin-bottom: 10px; opacity: 0.5; }
+.empty p { font-size: 13px; line-height: 1.6; }
+
+.durum-serit { text-align: center; font-size: 11px; padding: 6px; color: #64748b; }
+
+.tabbar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: rgba(11,17,32,0.96); backdrop-filter: blur(10px); border-top: 1px solid rgba(148,163,184,0.12); padding: 6px 0 calc(6px + env(safe-area-inset-bottom)); z-index: 50; }
+.tabbar button { flex: 1; background: none; border: none; color: #64748b; font-size: 10px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px; line-height: 1.2; }
+.tabbar button .ico { font-size: 21px; }
+.tabbar button .cn { font-size: 9px; opacity: 0.8; }
+.tabbar button.aktif { color: #fbbf24; }
+.tab-rozet { background: #34d399; color: #0b1120; font-size: 9px; font-weight: 800; border-radius: 999px; padding: 1px 6px; margin-left: 3px; }
+
+/* Giriş ekranı */
+.auth-overlay { position: fixed; inset: 0; background: radial-gradient(1200px 600px at 50% -10%, #1e293b 0%, #0b1120 55%), #0b1120; display: none; align-items: center; justify-content: center; z-index: 200; padding: 24px; }
+.auth-box { width: 100%; max-width: 360px; text-align: center; }
+.auth-logo { width: 60px; height: 60px; border-radius: 17px; background: linear-gradient(135deg,#f59e0b,#ef4444); display: inline-flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 8px 24px rgba(245,158,11,0.3); margin-bottom: 14px; }
+.auth-title { font-size: 22px; font-weight: 800; color: #f1f5f9; margin-bottom: 4px; }
+.auth-title .cn { font-size: 16px; color: #94a3b8; }
+.auth-sub { font-size: 13px; color: #94a3b8; margin-bottom: 22px; line-height: 1.6; }
+.auth-input { width: 100%; background: #0b1120; border: 1.5px solid #334155; border-radius: 12px; color: #f1f5f9; font-size: 16px; padding: 14px; margin-bottom: 12px; outline: none; -webkit-appearance: none; }
+.auth-input:focus { border-color: #f59e0b; }
+.auth-err { color: #f87171; font-size: 13px; min-height: 18px; margin-bottom: 8px; font-weight: 600; }
+.auth-btn { width: 100%; border: none; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 700; cursor: pointer; background: linear-gradient(135deg,#f59e0b,#f97316); color: #fff; box-shadow: 0 6px 16px rgba(245,158,11,0.3); }
+.auth-note { font-size: 12px; color: #64748b; line-height: 1.6; margin-top: 12px; }
+.cikis-btn { background: rgba(148,163,184,0.12); border: none; color: #94a3b8; font-size: 11px; padding: 5px 12px; border-radius: 999px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<!-- GİRİŞ EKRANI -->
+<div class="auth-overlay" id="authOverlay">
+    <div class="auth-box">
+        <div class="auth-logo">📦</div>
+        <div class="auth-title">Tedarikçi <span class="cn">供应商</span></div>
+        <div class="auth-sub">Giriş yap, ürün kataloğunu yönet.<br>登录以管理产品目录。</div>
+        <input id="authEmail" class="auth-input" type="email" inputmode="email" autocomplete="username" placeholder="E-posta / 邮箱">
+        <input id="authPass" class="auth-input" type="password" autocomplete="current-password" placeholder="Şifre / 密码">
+        <div id="authErr" class="auth-err"></div>
+        <button class="auth-btn" onclick="authGiris()">Giriş Yap / 登录</button>
+        <div class="auth-note">Bu ekran sadece ürün ekleme ve sipariş görüntüleme içindir.<br>此屏幕仅用于添加产品和查看订单。</div>
+    </div>
+</div>
+
+<div class="header">
+    <div class="logo">📦</div>
+    <h1>Tedarikçi Paneli <span class="cn">供应商面板</span></h1>
+    <small id="durumSerit">☁️ Bağlanıyor… 连接中…</small>
+</div>
+
+<!-- ÜRÜN EKLE -->
+<div id="view-ekle">
+    <div class="card">
+        <div class="card-title">➕ Ürün Ekle · 添加商品</div>
+        <div class="foto-blok">
+            <div class="foto-ekle" id="fotoKutu" onclick="fotoSec()">
+                <span>📷</span><span class="t">Fotoğraf · 照片</span>
+            </div>
+        </div>
+        <input type="file" accept="image/*" capture="environment" id="fotoInput" style="display:none" onchange="fotoYuklendi(this)">
+        <div class="row2">
+            <div class="field">
+                <label>Fiyat <span class="cn">价格 ¥</span></label>
+                <input id="fiyatInput" type="number" inputmode="decimal" placeholder="¥">
+            </div>
+            <div class="field">
+                <label>Gram <span class="cn">克 g</span></label>
+                <input id="gramInput" type="number" inputmode="decimal" placeholder="g">
+            </div>
+        </div>
+        <div class="gram-toggle">
+            <input type="radio" name="gb" id="gb1" value="1" checked><label for="gb1">Tek · 单个</label>
+            <input type="radio" name="gb" id="gb12" value="12"><label for="gb12">Düzine · 一打 (12)</label>
+        </div>
+        <div class="field">
+            <label>Not <span class="cn">备注 (opsiyonel · 可选)</span></label>
+            <input id="notInput" type="text" placeholder="ör. renk, kod / 例如：颜色、编号" style="text-align:left;font-size:14px">
+        </div>
+        <button class="btn-ana btn-ekle" onclick="urunEkle()">➕ Kataloğa Ekle <span class="cn">加入目录</span></button>
+    </div>
+</div>
+
+<!-- KATALOĞUM -->
+<div id="view-katalog" style="display:none">
+    <div id="katalogList"></div>
+</div>
+
+<!-- GELEN SİPARİŞLER -->
+<div id="view-siparis" style="display:none">
+    <div id="siparisList"></div>
+</div>
+
+<!-- ALT SEKMELER -->
+<nav class="tabbar">
+    <button id="tab-ekle" class="aktif" onclick="tabGoster('ekle')"><span class="ico">➕</span><span>Ürün Ekle</span><span class="cn">添加</span></button>
+    <button id="tab-katalog" onclick="tabGoster('katalog')"><span class="ico">📦</span><span>Kataloğum<span class="tab-rozet" id="rozetKatalog" style="display:none">0</span></span><span class="cn">目录</span></button>
+    <button id="tab-siparis" onclick="tabGoster('siparis')"><span class="ico">📥</span><span>Siparişler<span class="tab-rozet" id="rozetSiparis" style="display:none">0</span></span><span class="cn">订单</span></button>
+</nav>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+// ===== Firebase =====
+var _fbConfig = {
+    apiKey: "AIzaSyDMQqZuCBYVd6bPFxMzTZbqHr8WW1fwk6s",
+    authDomain: "cinsiparis-15e95.firebaseapp.com",
+    databaseURL: "https://cinsiparis-15e95-default-rtdb.firebaseio.com",
+    projectId: "cinsiparis-15e95",
+    storageBucket: "cinsiparis-15e95.firebasestorage.app",
+    messagingSenderId: "215325450592",
+    appId: "1:215325450592:web:3bbdc8fbad2afd7f20fe05"
+};
+var _fbReady = false, _user = null, _foto = null, _katalog = [], _siparisler = [];
+
+function durum(txt, renk) { var e = document.getElementById('durumSerit'); if (e) { e.textContent = txt; e.style.color = renk || '#64748b'; } }
+
+// ===== Fotoğraf sıkıştırma (ana uygulamayla aynı) =====
+function resizeImage(file, cb, maxSize, q) {
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+        var img = new Image();
+        img.onload = function() {
+            var max = maxSize || 400, w = img.width, h = img.height;
+            if (w > h) { if (w > max) { h = Math.round(h * max / w); w = max; } }
+            else { if (h > max) { w = Math.round(w * max / h); h = max; } }
+            var cv = document.createElement('canvas');
+            cv.width = w; cv.height = h;
+            cv.getContext('2d').drawImage(img, 0, 0, w, h);
+            try { cb(cv.toDataURL('image/jpeg', q || 0.65)); } catch(e) { cb(ev.target.result); }
+        };
+        img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+function fotoSec() { document.getElementById('fotoInput').click(); }
+function fotoYuklendi(input) {
+    if (!input.files || !input.files[0]) return;
+    resizeImage(input.files[0], function(dataUrl) {
+        _foto = dataUrl;
+        document.getElementById('fotoKutu').outerHTML =
+            '<img class="foto-onizleme" id="fotoKutu" src="' + dataUrl + '" onclick="fotoSec()">';
+    }, 400, 0.65);
+    input.value = '';
+}
+
+// ===== Ürün ekle =====
+function urunEkle() {
+    if (!_fbReady || !_user) { alert('Bağlantı yok. 无连接。'); return; }
+    var fiyat = parseFloat(document.getElementById('fiyatInput').value);
+    var gram = parseFloat(document.getElementById('gramInput').value);
+    if (!fiyat || !gram) { alert('Fiyat ve gram girin.\n请输入价格和克重。'); return; }
+    if (!_foto) { alert('Fotoğraf ekleyin.\n请添加照片。'); return; }
+    var gbEl = document.querySelector('input[name=gb]:checked');
+    var urun = {
+        img: _foto,
+        fiyat: fiyat,
+        gram: gram,
+        gb: gbEl ? parseInt(gbEl.value) : 1,
+        aciklama: (document.getElementById('notInput').value || '').trim(),
+        eklendi: firebase.database.ServerValue.TIMESTAMP
+    };
+    var btn = document.querySelector('.btn-ekle');
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+    firebase.database().ref('katalog/urunler').push(urun).then(function() {
+        return firebase.database().ref('katalog/rev').set(firebase.database.ServerValue.TIMESTAMP);
+    }).then(function() {
+        // formu temizle
+        _foto = null;
+        document.getElementById('fiyatInput').value = '';
+        document.getElementById('gramInput').value = '';
+        document.getElementById('notInput').value = '';
+        var fk = document.getElementById('fotoKutu');
+        if (fk) fk.outerHTML = '<div class="foto-ekle" id="fotoKutu" onclick="fotoSec()"><span>📷</span><span class="t">Fotoğraf · 照片</span></div>';
+        durum('✅ Eklendi · 已添加', '#34d399');
+    }).catch(function(e) {
+        alert('Eklenemedi: ' + (e && e.message ? e.message : e) + '\n添加失败。');
+    }).then(function() {
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    });
+}
+
+// ===== Kataloğum (canlı) =====
+function katalogDinle() {
+    firebase.database().ref('katalog/urunler').on('value', function(snap) {
+        _katalog = [];
+        snap.forEach(function(c) { var v = c.val() || {}; v._id = c.key; _katalog.push(v); });
+        _katalog.sort(function(a, b) { return (b.eklendi || 0) - (a.eklendi || 0); });
+        rozet('rozetKatalog', _katalog.length);
+        if (document.getElementById('view-katalog').style.display !== 'none') katalogRender();
+    }, function(e) { durum('⚠️ Katalog okunamadı', '#f87171'); });
+}
+function katalogRender() {
+    var el = document.getElementById('katalogList');
+    if (!_katalog.length) {
+        el.innerHTML = '<div class="empty"><div class="ico">📦</div><p>Henüz ürün yok.<br>还没有产品。<br><br>“Ürün Ekle” ile başla.<br>点击“添加”开始。</p></div>';
+        return;
+    }
+    var h = '<div class="card-title" style="margin:4px 2px 12px">📦 Kataloğum · 我的目录 (' + _katalog.length + ')</div><div class="grid">';
+    for (var i = 0; i < _katalog.length; i++) {
+        var u = _katalog[i];
+        h += '<div class="k-card">' +
+            '<button class="k-sil" onclick="urunSil(\'' + u._id + '\')">🗑️</button>' +
+            '<img src="' + (u.img || '') + '">' +
+            '<div class="k-bilgi"><div class="k-fiyat">¥' + (u.fiyat || 0) + '</div>' +
+            '<div class="k-gram">' + (u.gram || 0) + ' g' + (u.gb === 12 ? ' · düzine/打' : '') + '</div>' +
+            (u.aciklama ? '<div class="k-not">' + _esc(u.aciklama) + '</div>' : '') +
+            '</div></div>';
+    }
+    h += '</div>';
+    el.innerHTML = h;
+}
+function urunSil(id) {
+    if (!confirm('Bu ürünü katalogdan sil?\n从目录中删除此产品？')) return;
+    firebase.database().ref('katalog/urunler/' + id).remove().then(function() {
+        return firebase.database().ref('katalog/rev').set(firebase.database.ServerValue.TIMESTAMP);
+    }).catch(function(e) { alert('Silinemedi: ' + (e && e.message ? e.message : e)); });
+}
+
+// ===== Gelen siparişler (canlı) =====
+function siparisDinle() {
+    firebase.database().ref('katalog/siparisler').on('value', function(snap) {
+        _siparisler = [];
+        snap.forEach(function(c) { var v = c.val() || {}; v._id = c.key; _siparisler.push(v); });
+        _siparisler.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); });
+        rozet('rozetSiparis', _siparisler.length);
+        if (document.getElementById('view-siparis').style.display !== 'none') siparisRender();
+    }, function(e) { durum('⚠️ Siparişler okunamadı', '#f87171'); });
+}
+function siparisRender() {
+    var el = document.getElementById('siparisList');
+    if (!_siparisler.length) {
+        el.innerHTML = '<div class="empty"><div class="ico">📥</div><p>Henüz sipariş yok.<br>还没有订单。</p></div>';
+        return;
+    }
+    var h = '<div class="card-title" style="margin:4px 2px 12px">📥 Gelen Siparişler · 收到的订单 (' + _siparisler.length + ')</div>';
+    for (var i = 0; i < _siparisler.length; i++) {
+        var s = _siparisler[i], urunler = s.urunler || [];
+        var adet = 0, cesit = urunler.length;
+        for (var j = 0; j < urunler.length; j++) adet += (urunler[j].adet || 0);
+        h += '<div class="s-card"><div class="s-ust"><span class="s-tarih">🧾 ' + (s.tarih || '') + '</span><span class="s-rozet">Yeni · 新</span></div><div class="s-urunler">';
+        for (var j = 0; j < urunler.length; j++) {
+            var u = urunler[j];
+            h += '<div class="s-urun"><img src="' + (u.img || '') + '"><span class="s-adet">×' + (u.adet || 1) + '</span></div>';
+        }
+        h += '</div><div class="s-ozet"><span>' + cesit + ' çeşit · ' + adet + ' adet<br>' + cesit + ' 种 · ' + adet + ' 件</span><span><b>¥' + (s.toplam || 0) + '</b></span></div></div>';
+    }
+    el.innerHTML = h;
+}
+
+function rozet(id, n) {
+    var e = document.getElementById(id);
+    if (!e) return;
+    if (n > 0) { e.textContent = n; e.style.display = ''; } else { e.style.display = 'none'; }
+}
+function _esc(s) { return String(s).replace(/[&<>"]/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+// ===== Sekmeler =====
+function tabGoster(t) {
+    document.getElementById('view-ekle').style.display = (t === 'ekle') ? 'block' : 'none';
+    document.getElementById('view-katalog').style.display = (t === 'katalog') ? 'block' : 'none';
+    document.getElementById('view-siparis').style.display = (t === 'siparis') ? 'block' : 'none';
+    document.getElementById('tab-ekle').classList.toggle('aktif', t === 'ekle');
+    document.getElementById('tab-katalog').classList.toggle('aktif', t === 'katalog');
+    document.getElementById('tab-siparis').classList.toggle('aktif', t === 'siparis');
+    if (t === 'katalog') katalogRender();
+    if (t === 'siparis') siparisRender();
+    window.scrollTo(0, 0);
+}
+
+// ===== Auth =====
+function authGiris() {
+    var em = (document.getElementById('authEmail').value || '').trim();
+    var pw = document.getElementById('authPass').value || '';
+    if (!em || !pw) { document.getElementById('authErr').textContent = 'E-posta ve şifre gir. 请输入邮箱和密码。'; return; }
+    document.getElementById('authErr').textContent = 'Giriş yapılıyor… 登录中…';
+    firebase.auth().signInWithEmailAndPassword(em, pw).catch(function(e) {
+        document.getElementById('authErr').textContent = (e && e.message ? e.message : 'Giriş başarısız. 登录失败。');
+    });
+}
+function authGoster(goster) { document.getElementById('authOverlay').style.display = goster ? 'flex' : 'none'; }
+
+(function() {
+    if (typeof firebase === 'undefined' || !firebase.initializeApp) {
+        durum('⚠️ Bulut yüklenemedi', '#fbbf24'); authGoster(true); return;
+    }
+    try {
+        firebase.initializeApp(_fbConfig);
+        try { firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch(e) {}
+        _fbReady = true;
+    } catch (e) { durum('⚠️ Başlatılamadı', '#f87171'); authGoster(true); return; }
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        _user = user || null;
+        if (user) {
+            authGoster(false);
+            var p = document.getElementById('authPass'); if (p) p.value = '';
+            durum('☁️ Bağlı · 已连接', '#34d399');
+            katalogDinle();
+            siparisDinle();
+        } else {
+            authGoster(true);
+            durum('Giriş yapılmadı · 未登录', '#94a3b8');
+        }
+    });
+})();
+
+if ('serviceWorker' in navigator) { try { navigator.serviceWorker.register('sw.js'); } catch (e) {} }
+</script>
+</body>
+</html>
