@@ -73,7 +73,9 @@ body {
 .s-urunler { display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 8px; }
 .s-urun { position: relative; }
 .s-urun img { width: 100%; aspect-ratio: 3/4; object-fit: contain; background: #0b1120; border-radius: 10px; border: 1px solid rgba(148,163,184,0.12); }
-.s-adet { position: absolute; bottom: 4px; right: 4px; background: rgba(16,185,129,0.92); color: #04281c; font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 999px; }
+.s-adet { position: absolute; top: 4px; right: 4px; background: rgba(16,185,129,0.92); color: #04281c; font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 999px; }
+.s-fiyat { text-align: center; font-size: 14px; font-weight: 800; color: #fbbf24; margin-top: 4px; line-height: 1.15; }
+.s-not { font-size: 11px; color: #ddd6fe; background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); border-radius: 8px; padding: 6px 9px; margin-bottom: 9px; font-weight: 600; }
 .s-ozet { font-size: 12px; color: #94a3b8; margin-top: 10px; display: flex; justify-content: space-between; }
 .s-ozet b { color: #fbbf24; }
 
@@ -319,10 +321,14 @@ function siparisRender() {
         var s = _siparisler[i], urunler = s.urunler || [];
         var adet = 0, cesit = urunler.length;
         for (var j = 0; j < urunler.length; j++) adet += (urunler[j].adet || 0);
-        h += '<div class="s-card"><div class="s-ust"><span class="s-tarih">🧾 ' + (s.tarih || '') + '</span><span class="s-rozet">Yeni · 新</span></div><div class="s-urunler">';
+        var fiyatliMi = false;
+        for (var j = 0; j < urunler.length; j++) { if (urunler[j] && urunler[j].satis != null) { fiyatliMi = true; break; } }
+        h += '<div class="s-card"><div class="s-ust"><span class="s-tarih">🧾 ' + (s.tarih || '') + '</span><span class="s-rozet">Yeni · 新</span></div>';
+        if (fiyatliMi) h += '<div class="s-not">🏷️ Ürüne basılacak fiyat (₺) · 要印在商品上的价格 (土耳其里拉)</div>';
+        h += '<div class="s-urunler">';
         for (var j = 0; j < urunler.length; j++) {
             var u = urunler[j];
-            h += '<div class="s-urun"><img src="' + (u.img || '') + '"><span class="s-adet">×' + (u.adet || 1) + '</span></div>';
+            h += '<div class="s-urun"><img src="' + (u.img || '') + '"><span class="s-adet">×' + (u.adet || 1) + '</span>' + (u.satis != null ? '<div class="s-fiyat">₺' + u.satis + '</div>' : '') + '</div>';
         }
         h += '</div><div class="s-ozet"><span>' + cesit + ' çeşit · ' + adet + ' adet<br>' + cesit + ' 种 · ' + adet + ' 件</span><span><b>¥' + (s.toplam || 0) + '</b></span></div></div>';
     }
